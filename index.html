@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Recetario de aprovechamiento · Segunda Mesa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,500;0,700;1,500&family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #F6F8F1;
+    --surface: #FFFFFF;
+    --ink: #1F2E1B;
+    --muted: #56664F;
+    --moss: #5E7B4C;
+    --moss-ink: #FFFFFF;
+    --sage: #DCE7D1;
+    --line: #C9D6BD;
+    --tape: #EDE3C4;
+    --tape-ink: #3B3420;
+    --amber: #9A6A1F;
+    --amber-bg: #F7EBD3;
+    --earth: #7A5A3E;
+    --earth-bg: #EFE4D8;
+    --serif: "Alegreya", Georgia, "Times New Roman", serif;
+    --sans: "Alegreya Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+    color-scheme: light;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #131A11; --surface: #1A2317; --ink: #E5ECDD; --muted: #A6B59C;
+      --moss: #9DBB86; --moss-ink: #12190F; --sage: #243220; --line: #35472F;
+      --tape: #4A4330; --tape-ink: #F1E9CF; --amber: #E2B464; --amber-bg: #33291A;
+      --earth: #CDA987; --earth-bg: #30261D; color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #131A11; --surface: #1A2317; --ink: #E5ECDD; --muted: #A6B59C;
+    --moss: #9DBB86; --moss-ink: #12190F; --sage: #243220; --line: #35472F;
+    --tape: #4A4330; --tape-ink: #F1E9CF; --amber: #E2B464; --amber-bg: #33291A;
+    --earth: #CDA987; --earth-bg: #30261D; color-scheme: dark;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  body {
+    margin: 0; background: var(--paper); color: var(--ink);
+    font-family: var(--sans); font-size: 1.125rem; line-height: 1.55;
+  }
+  img { max-width: 100%; }
+  a { color: var(--moss); }
+  :focus-visible { outline: 3px solid var(--moss); outline-offset: 3px; border-radius: 4px; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 clamp(1rem, 4vw, 2.5rem); }
+
+  /* Encabezado */
+  .top { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 1.25rem 0; border-bottom: 1px solid var(--line); }
+  .brand { font-family: var(--serif); font-weight: 700; font-size: 1.35rem; color: var(--ink); text-decoration: none; }
+  .brand span { color: var(--moss); }
+  .top nav { display: flex; gap: 1.25rem; flex-wrap: wrap; font-size: 1rem; }
+  .top nav a { text-decoration: none; color: var(--muted); }
+  .top nav a:hover { color: var(--ink); text-decoration: underline; }
+
+  /* Héroe: la pregunta y las cintas de rotulado */
+  .hero { padding: clamp(2.5rem, 7vw, 5rem) 0 2rem; }
+  .hero h1 { font-family: var(--serif); font-weight: 700; font-size: clamp(2.6rem, 7vw, 4.8rem); line-height: 1.02; margin: 0 0 1rem; letter-spacing: -0.01em; max-width: 14ch; }
+  .hero p { max-width: 58ch; color: var(--muted); margin: 0 0 2.25rem; font-size: 1.2rem; }
+  .tapes { display: flex; flex-wrap: wrap; gap: 0.9rem 1rem; }
+  .tape {
+    position: relative; border: 0; cursor: pointer; text-align: left;
+    background: var(--tape); color: var(--tape-ink);
+    padding: 0.7rem 1.4rem 0.75rem; min-width: 11rem;
+    font-family: var(--serif); font-style: italic; font-size: 1.2rem; line-height: 1.2;
+    clip-path: polygon(2% 0, 98% 4%, 100% 50%, 97% 100%, 1% 96%, 0 48%);
+    transform: rotate(var(--r, -1deg));
+    transition: transform .15s ease, background .15s ease;
+  }
+  .tape small { display: block; font-family: var(--sans); font-style: normal; font-size: 0.85rem; opacity: .8; margin-top: .15rem; }
+  .tape:hover { transform: rotate(0deg) translateY(-2px); }
+  .tape[aria-pressed="true"] { background: var(--moss); color: var(--moss-ink); transform: rotate(0deg); }
+  .tape:nth-child(2) { --r: 1.2deg; } .tape:nth-child(3) { --r: -0.6deg; }
+  .tape:nth-child(4) { --r: 0.8deg; } .tape:nth-child(5) { --r: -1.4deg; } .tape:nth-child(6) { --r: 0.5deg; }
+  @media (prefers-reduced-motion: reduce) { .tape, .tape:hover { transition: none; transform: none; } }
+
+  /* Índice de fichas */
+  .index { padding: 2rem 0 3.5rem; }
+  .index-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 1rem; margin-bottom: 1rem; }
+  .index-head h2, .tree h2 { font-family: var(--serif); font-size: clamp(1.6rem, 3.5vw, 2.1rem); margin: 0; line-height: 1.15; }
+  .search { display: flex; flex-direction: column; gap: .3rem; font-size: .95rem; color: var(--muted); }
+  .search input {
+    font: inherit; font-size: 1.05rem; color: var(--ink); background: var(--surface);
+    border: 1px solid var(--line); border-radius: 8px; padding: .6rem .8rem; width: min(22rem, 80vw);
+  }
+  .count { color: var(--muted); font-size: 1rem; margin: 0 0 .5rem; }
+  .list { list-style: none; margin: 0; padding: 0; border-top: 2px solid var(--ink); }
+  .list li { border-bottom: 1px solid var(--line); }
+  .row {
+    width: 100%; background: none; border: 0; color: inherit; cursor: pointer; text-align: left; font: inherit;
+    display: grid; grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.6fr) minmax(0, 1fr); gap: 1rem; align-items: baseline;
+    padding: 1rem .25rem;
+  }
+  .row:hover { background: var(--sage); }
+  .row strong { font-family: var(--serif); font-size: 1.3rem; font-weight: 700; display: block; line-height: 1.2; }
+  .row .src { color: var(--muted); font-size: 1rem; }
+  .row .life { font-size: 1rem; }
+  .row .life b { font-weight: 500; }
+  .empty { padding: 2rem .25rem; color: var(--muted); }
+  .empty button { font: inherit; color: var(--moss); background: none; border: 0; text-decoration: underline; cursor: pointer; padding: 0; }
+  @media (max-width: 680px) {
+    .row { grid-template-columns: 1fr; gap: .2rem; }
+  }
+
+  /* Árbol de decisión */
+  .tree { background: var(--sage); padding: clamp(2rem, 5vw, 3.5rem) 0; }
+  .tree-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: clamp(1.5rem, 4vw, 3rem); align-items: start; }
+  .tree p.lead { color: var(--muted); max-width: 46ch; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: clamp(1.25rem, 3vw, 2rem); }
+  .q { font-family: var(--serif); font-size: 1.45rem; line-height: 1.25; margin: 0 0 .5rem; }
+  .q-help { color: var(--muted); margin: 0 0 1.25rem; font-size: 1rem; }
+  .answers { display: flex; gap: .75rem; flex-wrap: wrap; }
+  .btn {
+    font: inherit; font-weight: 500; cursor: pointer; border-radius: 999px; padding: .6rem 1.4rem;
+    border: 2px solid var(--moss); background: var(--moss); color: var(--moss-ink); text-decoration: none; display: inline-block;
+  }
+  .btn.ghost { background: transparent; color: var(--ink); }
+  .trail { list-style: none; margin: 1.25rem 0 0; padding: 1rem 0 0; border-top: 1px dashed var(--line); font-size: .95rem; color: var(--muted); }
+  .trail li { margin: .15rem 0; }
+  .result { border-radius: 10px; padding: 1rem 1.2rem; margin-bottom: 1.2rem; }
+  .result h3 { font-family: var(--serif); font-size: 1.6rem; margin: 0 0 .3rem; }
+  .result p { margin: 0; }
+  .result.reutilizar { background: var(--sage); }
+  .result.donar { background: var(--amber-bg); }
+  .result.donar h3 { color: var(--amber); }
+  .result.compostar { background: var(--earth-bg); }
+  .result.compostar h3 { color: var(--earth); }
+  @media (max-width: 780px) { .tree-grid { grid-template-columns: 1fr; } }
+
+  footer { padding: 2rem 0 3rem; color: var(--muted); font-size: .95rem; }
+  footer p { max-width: 70ch; }
+
+  /* Ficha técnica */
+  dialog {
+    width: min(960px, 100%); max-height: 92vh; padding: 0; border: 1px solid var(--line); border-radius: 16px;
+    background: var(--surface); color: var(--ink);
+  }
+  dialog::backdrop { background: rgba(15, 22, 13, .55); }
+  .f-head { padding: 1.5rem clamp(1.25rem, 4vw, 2.25rem) 1.25rem; border-bottom: 1px solid var(--line); }
+  .f-head .tape { cursor: default; font-size: 1rem; min-width: 0; padding: .4rem 1rem; transform: rotate(-1deg); }
+  .f-head .tape:hover { transform: rotate(-1deg); }
+  .f-head h2 { font-family: var(--serif); font-size: clamp(1.8rem, 4vw, 2.5rem); line-height: 1.1; margin: .9rem 0 .4rem; }
+  .f-meta { display: flex; flex-wrap: wrap; gap: .4rem 1.5rem; color: var(--muted); font-size: 1rem; margin: 0; }
+  .f-body { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: clamp(1.25rem, 3vw, 2.5rem); padding: 1.5rem clamp(1.25rem, 4vw, 2.25rem); }
+  .f-body h3 { font-family: var(--serif); font-size: 1.25rem; margin: 0 0 .5rem; }
+  .f-body section + section { margin-top: 1.5rem; }
+  .f-body ul, .f-body ol { margin: 0; padding-left: 1.3rem; }
+  .f-body li { margin: .3rem 0; }
+  .f-body ol li::marker { font-family: var(--serif); font-weight: 700; color: var(--moss); }
+  .critical { background: var(--amber-bg); border-left: 4px solid var(--amber); border-radius: 8px; padding: 1rem 1.1rem; }
+  .critical h3 { color: var(--amber); }
+  dl.facts { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: .35rem 1rem; }
+  dl.facts dt { color: var(--muted); }
+  dl.facts dd { margin: 0; font-weight: 500; }
+  .status { display: inline-block; font-size: .9rem; padding: .15rem .65rem; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); }
+  .calc label { display: block; font-size: .95rem; color: var(--muted); margin-top: .6rem; }
+  .calc input { font: inherit; width: 100%; padding: .5rem .7rem; border-radius: 8px; border: 1px solid var(--line); background: var(--paper); color: var(--ink); }
+  .calc output { display: block; margin-top: .8rem; font-family: var(--serif); font-size: 1.3rem; }
+  .calc .note { font-size: .9rem; color: var(--muted); margin: .3rem 0 0; }
+  .f-foot { display: flex; justify-content: flex-end; gap: .75rem; padding: 1rem clamp(1.25rem, 4vw, 2.25rem) 1.5rem; border-top: 1px solid var(--line); }
+  @media (max-width: 720px) { .f-body { grid-template-columns: 1fr; } }
+
+  @media print {
+    body.printing > *:not(dialog) { display: none !important; }
+    body.printing dialog { position: static; max-height: none; border: 0; width: 100%; }
+    .f-foot, .calc { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="wrap top">
+  <a class="brand" href="#fichas">Segunda <span>Mesa</span></a>
+  <nav aria-label="Secciones">
+    <a href="#fichas">Fichas</a>
+    <a href="#decidir">Reutilizar, donar o compostar</a>
+  </nav>
+</header>
+
+<main>
+  <section class="wrap hero" aria-labelledby="titulo">
+    <h1 id="titulo">¿Qué te sobró hoy?</h1>
+    <p>Elige el tipo de excedente y encuentra la ficha para aprovecharlo con seguridad, sin tocar tu carta. Cada ficha se adapta con el chef antes de usarse en el servicio.</p>
+    <div class="tapes" id="tapes" role="group" aria-label="Filtrar por tipo de excedente"></div>
+  </section>
+
+  <section class="wrap index" id="fichas" aria-labelledby="t-fichas">
+    <div class="index-head">
+      <h2 id="t-fichas">Fichas de aprovechamiento</h2>
+      <label class="search">Buscar por ingrediente o preparación
+        <input type="search" id="q" placeholder="Ej.: espinas, pan, cáscaras">
+      </label>
+    </div>
+    <p class="count" id="count" aria-live="polite"></p>
+    <ul class="list" id="list"></ul>
+  </section>
+
+  <section class="tree" id="decidir" aria-labelledby="t-tree">
+    <div class="wrap tree-grid">
+      <div>
+        <h2 id="t-tree">¿Reutilizar, donar o compostar?</h2>
+        <p class="lead">Antes de abrir una ficha, responde estas preguntas. Si algo no pasa el filtro de inocuidad, no se aprovecha en cocina.</p>
+      </div>
+      <div class="card" id="tree" aria-live="polite"></div>
+    </div>
+  </section>
+</main>
+
+<footer class="wrap">
+  <p>Prototipo del recetario de Segunda Mesa para restaurantes de Chapinero Alto. Tiempos, temperaturas y vida útil son referencias generales: el asesor de calidad debe validarlos para cada cocina, en línea con la normativa sanitaria vigente y la Ley 1990 de 2019 para donaciones.</p>
+</footer>
+
+<dialog id="ficha" aria-labelledby="f-title"></dialog>
+
+<script>
+/* ===== Datos del recetario: el equipo puede editar o agregar fichas aquí ===== */
+const CATEGORIAS = [
+  { id: "todas", nombre: "Todo", ejemplo: "Ver todas las fichas" },
+  { id: "proteinas", nombre: "Recortes de proteína", ejemplo: "Huesos, espinas, puntas" },
+  { id: "vegetales", nombre: "Vegetales y hierbas", ejemplo: "Cáscaras, tallos, hojas" },
+  { id: "pan", nombre: "Panes y masas", ejemplo: "Pan del día anterior" },
+  { id: "frutas", nombre: "Frutas maduras", ejemplo: "Muy maduras o en recortes" },
+  { id: "platos", nombre: "Platos no servidos", ejemplo: "Guarniciones que no salieron" }
+];
+
+const FICHAS = [
+  {
+    id: "fondo-res", cat: "proteinas", nombre: "Fondo oscuro de huesos y recortes de res",
+    excedente: "Huesos, recortes de res y puntas de cebolla, zanahoria y apio",
+    rendimiento: "4 L", tiempo: "7 a 9 h (casi todo sin atención)",
+    ingredientes: ["5 kg de huesos y recortes de res", "1 kg de recortes de cebolla, zanahoria y apio", "2 cdas de pasta de tomate", "8 L de agua fría", "Tallos de tomillo y perejil"],
+    pasos: ["Hornea huesos y recortes a 200 °C hasta dorar, unos 40 a 50 minutos.", "Sofríe los recortes vegetales con la pasta de tomate.", "Cubre todo con agua fría, lleva a hervor suave y retira la espuma.", "Cocina a fuego bajo de 6 a 8 horas sin que hierva fuerte.", "Cuela, enfría rápido, retira la grasa y rotula con fecha."],
+    criticos: ["Usa recortes crudos guardados a 5 °C o menos y con máximo 2 días desde el corte.", "Enfría en recipientes poco profundos o baño de hielo: de 60 °C a 21 °C en 2 horas y a 5 °C o menos en las 4 horas siguientes.", "Lleva a hervor antes de usarlo en servicio."],
+    refri: "3 días", congelado: "3 meses",
+    destino: "Base de salsas, demi-glace, risottos y sopas del menú del día",
+    responsable: "Cocinero de producción, turno de la mañana"
+  },
+  {
+    id: "fumet", cat: "proteinas", nombre: "Fumet de espinas de pescado blanco",
+    excedente: "Espinas y cabezas de pescado blanco del fileteado del día",
+    rendimiento: "2,5 L", tiempo: "1 h",
+    ingredientes: ["2 kg de espinas y cabezas de pescado blanco, sin agallas", "500 g de recortes de cebolla blanca, puerro y apio", "Tallos de perejil", "3 L de agua fría", "200 ml de vino blanco (opcional)"],
+    pasos: ["Remoja las espinas en agua fría 30 minutos y lava los restos de sangre.", "Suda los vegetales sin dorarlos.", "Agrega espinas, vino y agua; cocina a hervor suave 20 a 25 minutos retirando la espuma.", "Cuela sin presionar los sólidos para que no se enturbie.", "Enfría rápido y rotula."],
+    criticos: ["Solo espinas del día, con olor fresco a mar y sin olor amoniacal.", "Retira agallas y sangre: amargan y aceleran el deterioro.", "No pases de 25 minutos de cocción.", "Aplica el mismo enfriamiento rápido del fondo de res."],
+    refri: "2 días", congelado: "2 meses",
+    destino: "Arroces, sopas y salsas de pescado",
+    responsable: "Cocinero de la estación fría o de pescados"
+  },
+  {
+    id: "ragu", cat: "proteinas", nombre: "Ragú de recortes de res o cerdo",
+    excedente: "Recortes de porcionado de carnes, limpios de tendón duro",
+    rendimiento: "Unas 12 porciones", tiempo: "2 h 30 min",
+    ingredientes: ["1 kg de recortes de carne limpios", "300 g de recortes de cebolla, zanahoria y apio picados finos", "400 g de tomate maduro o pulpa", "500 ml de fondo oscuro (ficha de fondo de res)", "Aceite y sal"],
+    pasos: ["Muele o pica fino los recortes.", "Dóralos por tandas para que no se cocinen en su jugo.", "Sofríe los vegetales, agrega tomate y fondo.", "Cocina a fuego bajo de 1,5 a 2 horas.", "Verifica la temperatura interna y enfría rápido o mantén caliente."],
+    criticos: ["La carne molida debe llegar a 71 °C o más en el centro.", "Mantén caliente a 60 °C o más, o enfría rápido.", "No mezcles lotes de días distintos."],
+    refri: "3 días", congelado: "3 meses",
+    destino: "Pastas del menú del día, rellenos y comida del personal",
+    responsable: "Cocinero de producción"
+  },
+  {
+    id: "caldo-vegetal", cat: "vegetales", nombre: "Caldo de cáscaras y tallos",
+    excedente: "Cáscaras, tallos y puntas limpias de la mise en place",
+    rendimiento: "3,5 L", tiempo: "1 h",
+    ingredientes: ["1,5 kg de cáscaras y tallos de zanahoria, cebolla, puerro, apio, champiñón y tomate", "4 L de agua fría", "Tallos de hierbas", "Pimienta en grano"],
+    pasos: ["Lava y desinfecta los vegetales antes de pelarlos, así sus cáscaras quedan aptas.", "Guarda los recortes durante el turno en un recipiente rotulado y refrigerado.", "Cubre con agua fría y cocina a hervor suave 45 minutos.", "Cuela, enfría rápido y rotula."],
+    criticos: ["Descarta partes con moho, golpes o mal olor.", "No uses cáscaras de papa con zonas verdes.", "Evita exceso de repollo o brócoli: amargan el caldo."],
+    refri: "4 días", congelado: "3 meses",
+    destino: "Risottos, sopas, cocción de granos y base vegana",
+    responsable: "Cualquier estación al cierre del turno"
+  },
+  {
+    id: "pesto-tallos", cat: "vegetales", nombre: "Pesto de hojas y tallos",
+    excedente: "Hojas de zanahoria o rábano, tallos de cilantro y perejil, puntas de queso duro",
+    rendimiento: "400 g", tiempo: "20 min",
+    ingredientes: ["200 g de hojas y tallos tiernos", "60 g de puntas de queso duro rallado", "50 g de nueces o semillas", "1 diente de ajo", "150 ml de aceite de oliva", "Jugo de limón y sal"],
+    pasos: ["Blanquea las hojas 10 segundos y pásalas a agua con hielo para fijar el color.", "Sécalas muy bien.", "Procesa con el resto de ingredientes.", "Cubre la superficie con una capa de aceite y rotula."],
+    criticos: ["Hojas lavadas y desinfectadas.", "Refrigera de inmediato a 5 °C o menos: el ajo en aceite no se deja a temperatura ambiente."],
+    refri: "3 días", congelado: "2 meses en cubos",
+    destino: "Acompañamientos, pastas y vegetales asados",
+    responsable: "Estación de fríos"
+  },
+  {
+    id: "encurtido", cat: "vegetales", nombre: "Encurtido rápido de tallos",
+    excedente: "Tallos de brócoli, coliflor o acelga",
+    rendimiento: "1 frasco de 1 L", tiempo: "20 min + 24 h de reposo",
+    ingredientes: ["500 g de tallos pelados en bastones", "300 ml de vinagre blanco o de manzana", "300 ml de agua", "30 g de azúcar", "15 g de sal", "Semillas de mostaza, pimienta y laurel"],
+    pasos: ["Pela la parte fibrosa de los tallos y córtalos en bastones.", "Hierve vinagre, agua, azúcar, sal y especias.", "Vierte la salmuera caliente sobre los tallos en frascos limpios.", "Deja enfriar, refrigera y espera 24 horas antes de servir."],
+    criticos: ["Frascos lavados y desinfectados.", "Mantén al menos una parte de vinagre por cada parte de agua.", "Siempre refrigerado: no es una conserva para guardar a temperatura ambiente."],
+    refri: "2 semanas", congelado: "No aplica",
+    destino: "Guarnición ácida para platos grasos y tablas",
+    responsable: "Estación de fríos"
+  },
+  {
+    id: "polvo-cascaras", cat: "vegetales", nombre: "Polvo de cáscaras deshidratadas",
+    excedente: "Cáscaras de cebolla (capas internas), zanahoria, tomate y remolacha",
+    rendimiento: "Variable", tiempo: "4 a 8 h de deshidratado",
+    ingredientes: ["Cáscaras limpias de un solo tipo o mezcladas", "Sal (opcional, para sal saborizada)"],
+    pasos: ["Lava, desinfecta y seca las cáscaras.", "Extiéndelas en una sola capa.", "Deshidrata a 60 a 65 °C hasta que se quiebren.", "Muele, tamiza y envasa con fecha."],
+    criticos: ["Deben quebrarse, no doblarse: si se doblan, aún tienen humedad.", "Envase seco y hermético.", "Si aparecen grumos o humedad, descarta el lote."],
+    refri: "No necesita: 1 mes en lugar seco y oscuro", congelado: "No aplica",
+    destino: "Sales saborizadas, color en el emplatado y rebozados",
+    responsable: "Cocinero de producción"
+  },
+  {
+    id: "migas", cat: "pan", nombre: "Migas y crutones",
+    excedente: "Pan del día anterior, sin moho",
+    rendimiento: "Variable", tiempo: "30 min",
+    ingredientes: ["Pan del día anterior", "Aceite o mantequilla", "Recortes de hierbas", "Sal"],
+    pasos: ["Corta en cubos para crutones o procesa para migas.", "Mezcla con grasa, hierbas y sal.", "Hornea a 160 °C de 12 a 20 minutos hasta secar y dorar.", "Deja enfriar por completo antes de envasar."],
+    criticos: ["Si una pieza tiene moho, se descarta completa: no se recorta.", "Envasa solo en frío para evitar condensación."],
+    refri: "1 semana en envase hermético", congelado: "3 meses (migas)",
+    destino: "Ensaladas, gratinados, empanizados y texturas crocantes",
+    responsable: "Panadería o cocinero de producción"
+  },
+  {
+    id: "budin", cat: "pan", nombre: "Budín de pan y fruta madura",
+    excedente: "Pan del día anterior y fruta muy madura",
+    rendimiento: "10 porciones", tiempo: "1 h 20 min",
+    ingredientes: ["600 g de pan en cubos", "500 ml de leche", "4 huevos", "120 g de azúcar", "300 g de banano, manzana o pera madura en cubos", "Canela y vainilla"],
+    pasos: ["Mezcla leche, huevos, azúcar y especias.", "Remoja el pan 20 minutos.", "Incorpora la fruta.", "Hornea en baño maría a 170 °C de 40 a 50 minutos, hasta cuajar.", "Enfría rápido y porciona."],
+    criticos: ["El centro debe llegar a 71 °C o más (contiene huevo).", "Refrigera antes de que pasen 2 horas fuera del horno."],
+    refri: "3 días", congelado: "1 mes",
+    destino: "Postre del día y comida del personal",
+    responsable: "Pastelería"
+  },
+  {
+    id: "coulis", cat: "frutas", nombre: "Coulis o compota de fruta madura",
+    excedente: "Fruta muy madura o recortes de fruta (mango, fresa, mora, piña)",
+    rendimiento: "1 L", tiempo: "30 min",
+    ingredientes: ["1 kg de fruta madura o recortes", "150 a 250 g de azúcar, según el dulzor", "Jugo de 1 limón"],
+    pasos: ["Retira las partes dañadas.", "Cocina con el azúcar de 15 a 20 minutos.", "Licúa y cuela para coulis, o deja en trozos para compota.", "Envasa caliente y enfría rápido."],
+    criticos: ["Solo fruta madura sin signos de fermentación ni moho.", "Enfriamiento rápido antes de refrigerar."],
+    refri: "5 días", congelado: "3 meses",
+    destino: "Postres, bebidas, salsas agridulces y desayunos",
+    responsable: "Pastelería"
+  },
+  {
+    id: "guarniciones", cat: "platos", nombre: "Segunda vida para guarniciones no servidas",
+    excedente: "Arroces, purés, granos y vegetales cocidos que nunca salieron a la sala",
+    rendimiento: "Variable", tiempo: "Según la preparación",
+    ingredientes: ["Guarniciones del servicio anterior, enfriadas y rotuladas", "Ingredientes de la preparación final (ver ejemplos en los pasos)"],
+    pasos: ["Al cierre, separa en recipientes poco profundos rotulados con fecha y hora.", "Enfría rápido y refrigera.", "Al día siguiente, transforma: arroz en arancini o arroz salteado, puré en croquetas, vegetales en frittata o crema.", "Recalienta a 74 °C o más una sola vez y sirve."],
+    criticos: ["Nunca se aprovecha algo que salió a la mesa de un comensal.", "Descarta lo que pasó más de 2 horas entre 5 °C y 60 °C.", "Se recalienta una sola vez.", "El arroz cocido se enfría y refrigera de inmediato."],
+    refri: "24 horas", congelado: "No recomendado",
+    destino: "Menú del día y comida del personal; si no se usa, a donación con registro",
+    responsable: "Jefe de cocina al cierre del servicio"
+  }
+];
+
+/* ===== Filtro y búsqueda ===== */
+const state = { cat: "todas", q: "" };
+const tapesEl = document.getElementById("tapes");
+const listEl = document.getElementById("list");
+const countEl = document.getElementById("count");
+const qEl = document.getElementById("q");
+const norm = s => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+const catName = id => CATEGORIAS.find(c => c.id === id).nombre;
+
+function renderTapes() {
+  tapesEl.innerHTML = CATEGORIAS.map(c => {
+    const n = c.id === "todas" ? FICHAS.length : FICHAS.filter(f => f.cat === c.id).length;
+    return `<button class="tape" type="button" data-cat="${c.id}" aria-pressed="${state.cat === c.id}">
+      ${c.nombre}<small>${c.ejemplo} · ${n} ${n === 1 ? "ficha" : "fichas"}</small></button>`;
+  }).join("");
+}
+
+function renderList() {
+  const q = norm(state.q.trim());
+  const items = FICHAS.filter(f =>
+    (state.cat === "todas" || f.cat === state.cat) &&
+    (!q || norm([f.nombre, f.excedente, f.destino, f.ingredientes.join(" ")].join(" ")).includes(q))
+  );
+  countEl.textContent = items.length === 1 ? "1 ficha" : `${items.length} fichas`;
+  if (!items.length) {
+    listEl.innerHTML = `<li class="empty">No hay fichas para esa búsqueda. Prueba con otro ingrediente o <button type="button" id="reset">ver todas las fichas</button>.</li>`;
+    document.getElementById("reset").onclick = () => { state.cat = "todas"; state.q = ""; qEl.value = ""; renderTapes(); renderList(); };
+    return;
+  }
+  listEl.innerHTML = items.map(f => `<li><button class="row" type="button" data-id="${f.id}">
+      <span><strong>${f.nombre}</strong><span class="src">${f.excedente}</span></span>
+      <span class="src">${f.destino}</span>
+      <span class="life"><b>Refrigerado:</b> ${f.refri}</span>
+    </button></li>`).join("");
+}
+
+tapesEl.addEventListener("click", e => {
+  const b = e.target.closest(".tape"); if (!b) return;
+  state.cat = b.dataset.cat; renderTapes(); renderList();
+  document.getElementById("fichas").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+});
+qEl.addEventListener("input", e => { state.q = e.target.value; renderList(); });
+listEl.addEventListener("click", e => { const r = e.target.closest(".row"); if (r) openFicha(r.dataset.id); });
+
+/* ===== Ficha técnica ===== */
+const dlg = document.getElementById("ficha");
+const money = n => n.toLocaleString("es-CO", { style: "currency", currency: "COP", maximumFractionDigits: 0 });
+
+function openFicha(id) {
+  const f = FICHAS.find(x => x.id === id);
+  dlg.innerHTML = `
+    <div class="f-head">
+      <span class="tape">${catName(f.cat)}</span>
+      <h2 id="f-title">${f.nombre}</h2>
+      <p class="f-meta"><span>Rinde ${f.rendimiento}</span><span>Tiempo: ${f.tiempo}</span><span class="status">Ficha base, por adaptar con el chef</span></p>
+    </div>
+    <div class="f-body">
+      <div>
+        <section><h3>Excedente de origen</h3><p style="margin:0">${f.excedente}</p></section>
+        <section><h3>Ingredientes</h3><ul>${f.ingredientes.map(i => `<li>${i}</li>`).join("")}</ul></section>
+        <section><h3>Preparación</h3><ol>${f.pasos.map(p => `<li>${p}</li>`).join("")}</ol></section>
+      </div>
+      <div>
+        <section class="critical"><h3>Puntos críticos de inocuidad</h3><ul>${f.criticos.map(c => `<li>${c}</li>`).join("")}</ul></section>
+        <section><h3>Conservación y uso</h3>
+          <dl class="facts">
+            <dt>Refrigerado</dt><dd>${f.refri}</dd>
+            <dt>Congelado</dt><dd>${f.congelado}</dd>
+            <dt>Destino</dt><dd>${f.destino}</dd>
+            <dt>Responsable</dt><dd>${f.responsable}</dd>
+          </dl>
+        </section>
+        <section class="calc"><h3>¿Cuánto se recupera?</h3>
+          <label for="kg">Kilos de excedente aprovechados por semana</label>
+          <input id="kg" type="number" min="0" step="0.5" inputmode="decimal" placeholder="Ej.: 3">
+          <label for="precio">Costo del insumo por kilo (COP)</label>
+          <input id="precio" type="number" min="0" step="1000" inputmode="numeric" placeholder="Ej.: 28000">
+          <output id="ahorro" for="kg precio">Escribe los dos valores para estimar el ahorro.</output>
+          <p class="note">Estimación de referencia. El valor real sale del diagnóstico y la medición mensual.</p>
+        </section>
+      </div>
+    </div>
+    <div class="f-foot">
+      <button class="btn ghost" type="button" id="print">Imprimir ficha</button>
+      <button class="btn" type="button" id="close">Cerrar ficha</button>
+    </div>`;
+  const kg = dlg.querySelector("#kg"), precio = dlg.querySelector("#precio"), out = dlg.querySelector("#ahorro");
+  const calc = () => {
+    const k = parseFloat(kg.value), p = parseFloat(precio.value);
+    out.textContent = (k > 0 && p > 0)
+      ? `${money(k * p)} por semana, cerca de ${money(k * p * 4.3)} al mes`
+      : "Escribe los dos valores para estimar el ahorro.";
+  };
+  kg.oninput = calc; precio.oninput = calc;
+  dlg.querySelector("#close").onclick = () => dlg.close();
+  dlg.querySelector("#print").onclick = () => { document.body.classList.add("printing"); window.print(); document.body.classList.remove("printing"); };
+  dlg.showModal();
+}
+dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); });
+
+/* ===== Árbol de decisión ===== */
+const PREGUNTAS = {
+  mesa: { q: "¿El alimento salió a la sala o estuvo en el plato de un comensal?", help: "Incluye panes de la panera y salsas servidas en mesa.", si: "R:compostar-mesa", no: "estado" },
+  estado: { q: "¿Tiene moho, mal olor, empaque dañado o estuvo más de 2 horas entre 5 °C y 60 °C?", help: "Ese rango de temperatura es la zona donde las bacterias se multiplican más rápido.", si: "R:compostar-estado", no: "crudo" },
+  crudo: { q: "¿Es un recorte o insumo crudo (cáscaras, huesos, espinas, fruta madura, pan)?", help: "Si es un plato o guarnición ya cocinada, responde no.", si: "R:reutilizar", no: "hoy" },
+  hoy: { q: "¿Lo puedes usar en las próximas 24 horas en el menú del día o la comida del personal?", help: "Debe estar rotulado con fecha y hora, y conservado en frío.", si: "R:reutilizar-plato", no: "R:donar" }
+};
+const RESULTADOS = {
+  "compostar-mesa": { tipo: "compostar", titulo: "Compostar", texto: "Lo que estuvo en la mesa de un comensal no se reutiliza ni se dona. Sepáralo como residuo orgánico para el aliado de compostaje." },
+  "compostar-estado": { tipo: "compostar", titulo: "Compostar o descartar", texto: "No es apto para consumo. Si es orgánico y no tiene contaminación química, va al compostaje; si no, a la disposición de residuos. Registra el motivo para el seguimiento." },
+  "reutilizar": { tipo: "reutilizar", titulo: "Reutilizar en cocina", texto: "Busca la ficha de su tipo de excedente y sigue sus puntos críticos.", ver: true },
+  "reutilizar-plato": { tipo: "reutilizar", titulo: "Reutilizar en el menú del día", texto: "Usa la ficha de guarniciones no servidas: recalienta a 74 °C una sola vez y consume en máximo 24 horas.", ficha: "guarniciones" },
+  "donar": { tipo: "donar", titulo: "Donar con registro", texto: "Si está en buen estado y conservado en frío, entrégalo a la fundación o banco de alimentos aliado. Registra qué se dona, cuánto y a quién, según los lineamientos de la Ley 1990 de 2019." }
+};
+const treeEl = document.getElementById("tree");
+let trail = [];
+
+function renderTree(key) {
+  if (key.startsWith("R:")) {
+    const r = RESULTADOS[key.slice(2)];
+    treeEl.innerHTML = `<div class="result ${r.tipo}"><h3>${r.titulo}</h3><p>${r.texto}</p></div>
+      <div class="answers">
+        ${r.ver ? `<a class="btn" href="#fichas">Ver fichas</a>` : ""}
+        ${r.ficha ? `<button class="btn" type="button" id="abrir">Abrir la ficha</button>` : ""}
+        <button class="btn ghost" type="button" id="again">Revisar otro excedente</button>
+      </div>${trailHTML()}`;
+    treeEl.querySelector("#again").onclick = () => { trail = []; renderTree("mesa"); };
+    if (r.ficha) treeEl.querySelector("#abrir").onclick = () => openFicha(r.ficha);
+    return;
+  }
+  const p = PREGUNTAS[key];
+  treeEl.innerHTML = `<p class="q">${p.q}</p><p class="q-help">${p.help}</p>
+    <div class="answers"><button class="btn" type="button" data-a="si">Sí</button><button class="btn ghost" type="button" data-a="no">No</button></div>${trailHTML()}`;
+  treeEl.querySelectorAll("[data-a]").forEach(b => b.onclick = () => {
+    trail.push(`${p.q} ${b.dataset.a === "si" ? "Sí" : "No"}`);
+    renderTree(p[b.dataset.a]);
+  });
+}
+function trailHTML() {
+  return trail.length ? `<ol class="trail">${trail.map(t => `<li>${t}</li>`).join("")}</ol>` : "";
+}
+
+renderTapes(); renderList(); renderTree("mesa");
+</script>
+</body>
+</html>
